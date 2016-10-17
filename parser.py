@@ -13,8 +13,8 @@ def usage():
 def get_video_name(url):
     youtube = etree.HTML(urllib.request.urlopen(url).read())
     video_title = youtube.xpath("//span[@id='eow-title']/@title")
-    print (''.join(video_title))
-    return (video_title)
+    # print (''.join(video_title))
+    return (''.join(video_title))
 
 def extract_playlist_url(url):
     if 'list=' in url:
@@ -49,6 +49,7 @@ def crawl(url):
     cPL = ''
     amp = 0
     final_url = []
+    song_titles = []
     # Exract the part that identifies the playlist from the playlist url
     cPL = extract_playlist_url(url)
 
@@ -62,11 +63,13 @@ def crawl(url):
 
         for url in url_set:
             # sys.stdout.write(url + '\n')
-            get_video_name(url)
+            song_titles.append(get_video_name(url))
             time.sleep(0.04)
     else:
         print('No videos found. Please check playlist url.')
         exit(1)
+
+    return song_titles
 
 if __name__ == "__main__":
     if len(sys.argv) < 2 or len(sys.argv) > 2:
@@ -75,4 +78,6 @@ if __name__ == "__main__":
         url = sys.argv[1]
         if 'http' not in url:
             url = 'http://' + url
-        crawl(url)
+        song_titles = crawl(url)
+        for title in song_titles:
+            print (title)
